@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -15,24 +14,11 @@ import {
   Code2,
   ChevronRight,
   X,
-  Circle,
 } from "lucide-react";
 import { useProgressStore, type NodeStatus } from "@/store/progressStore";
 import { Button, StatusPill, Badge } from "@/components/ui";
+import FlowCanvas from "@/components/roadmap/FlowCanvas";
 import paths from "@/data/paths.json";
-
-// Dynamic import to avoid SSR issues with @xyflow/react
-const FlowCanvas = dynamic(() => import("@/components/roadmap/FlowCanvas"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex-1 flex items-center justify-center bg-slate-50">
-      <div className="text-center">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-        <p className="text-sm text-slate-400">Loading roadmap...</p>
-      </div>
-    </div>
-  ),
-});
 
 type PathNode = (typeof paths)[0]["nodes"][0];
 type PathData = (typeof paths)[0];
