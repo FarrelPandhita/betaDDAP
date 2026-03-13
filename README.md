@@ -1,8 +1,22 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# beta-ddap
 
-## Getting Started
+## Persyaratan dan Instalasi Dependensi
 
-First, run the development server:
+Sebelum menjalankan server, pastikan Anda telah menginstal Node.js di komputer Anda. Kemudian, instal semua dependensi dan library yang dibutuhkan proyek ini (seperti Next.js, React Flow, Recharts, Zustand, Lucide React, dll) dengan menjalankan perintah berikut di terminal:
+
+```bash
+npm install
+# atau
+yarn install
+# atau
+pnpm install
+# atau
+bun install
+```
+
+## Cara Menjalankan Server
+
+Setelah semua dependensi berhasil terinstal, Anda dapat menjalankan server pengembangan (development server) dengan perintah berikut:
 
 ```bash
 npm run dev
