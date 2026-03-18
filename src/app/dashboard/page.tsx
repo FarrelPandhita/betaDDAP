@@ -11,15 +11,7 @@ import {
   Download,
   BarChart2,
 } from "lucide-react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  Cell,
-} from "recharts";
+
 import { useProgressStore } from "@/store/progressStore";
 import { Button, ProgressBar, StatusPill } from "@/components/ui";
 import paths from "@/data/paths.json";
@@ -167,7 +159,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid lg:grid-cols-5 gap-6">
-        {/* Chart */}
+        {/* Progress per Path - horizontal bars */}
         <div className="card lg:col-span-3">
           <div className="flex items-center gap-2 mb-6">
             <BarChart2 className="w-5 h-5 text-primary" />
@@ -175,36 +167,62 @@ export default function DashboardPage() {
           </div>
 
           {chartData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={chartData} barSize={28} barGap={4}>
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#94A3B8" }} axisLine={false} tickLine={false} domain={[0, "dataMax"]} />
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0].payload;
-                    return (
-                      <div className="bg-white border border-border rounded-xl p-3 shadow-card-hover text-sm">
-                        <p className="font-bold text-text-primary mb-1">{d.fullName}</p>
-                        <p className="text-success">✓ Done: {d.done}</p>
-                        <p className="text-primary">◷ Learning: {d.learning}</p>
-                        <p className="text-text-muted">Total: {d.total}</p>
+            <div className="space-y-4 overflow-y-auto max-h-[240px] scrollbar-thin pr-1">
+              {chartData.map((d) => {
+                const donePct = d.total > 0 ? (d.done / d.total) * 100 : 0;
+                const learningPct = d.total > 0 ? (d.learning / d.total) * 100 : 0;
+                return (
+                  <div
+                    key={d.pathId}
+                    className="cursor-pointer group"
+                    onClick={() => router.push(`/roadmap/${d.pathId}`)}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-sm font-semibold text-text-primary group-hover:text-primary transition-colors truncate">
+                        {d.fullName}
+                      </span>
+                      <div className="flex items-center gap-2 ml-3 shrink-0">
+                        <span className="text-xs text-text-muted">
+                          {d.done}/{d.total}
+                        </span>
+                        <span className="text-xs font-bold" style={{ color: d.color }}>
+                          {d.percent}%
+                        </span>
                       </div>
-                    );
-                  }}
-                />
-                <Bar dataKey="done" name="Done" stackId="a" radius={[0, 0, 0, 0]}>
-                  {chartData.map((d, i) => (
-                    <Cell key={i} fill="#10B981" />
-                  ))}
-                </Bar>
-                <Bar dataKey="learning" name="Learning" stackId="a" radius={[6, 6, 0, 0]}>
-                  {chartData.map((d, i) => (
-                    <Cell key={i} fill={d.color} opacity={0.7} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                    </div>
+                    {/* Track */}
+                    <div className="w-full h-2.5 bg-surface-tertiary rounded-full overflow-hidden">
+                      <div className="h-full flex rounded-full overflow-hidden">
+                        {/* Done segment */}
+                        {donePct > 0 && (
+                          <div
+                            className="h-full transition-all duration-500"
+                            style={{ width: `${donePct}%`, backgroundColor: "#10B981" }}
+                          />
+                        )}
+                        {/* Learning segment */}
+                        {learningPct > 0 && (
+                          <div
+                            className="h-full transition-all duration-500"
+                            style={{ width: `${learningPct}%`, backgroundColor: d.color, opacity: 0.6 }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="flex items-center gap-1 text-[10px] text-text-muted">
+                        <span className="inline-block w-2 h-2 rounded-full bg-success" />
+                        Done: {d.done}
+                      </span>
+                      <span className="flex items-center gap-1 text-[10px] text-text-muted">
+                        <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: d.color, opacity: 0.7 }} />
+                        Learning: {d.learning}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
             <div className="flex flex-col items-center justify-center h-[220px] text-center">
               <BarChart2 className="w-10 h-10 text-text-muted mb-3" />
